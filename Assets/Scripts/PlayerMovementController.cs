@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,15 +28,24 @@ public class PlayerMovementController : MonoBehaviour
 
     private Vector2 leftStickPosition;
     private Vector2 rightStickPosition;
+    
+    [Header("Animation")]
+    public Animator _animatorPlayer;
+
 
     [HideInInspector]
     public bool isInputEnabled;
     private bool isDecelerating = false;
 
 
+    private void Awake()
+    {
+    }
+
     //@INIT
     void Start()
     {
+        //animatorPlayer = GetComponent<Animator>();
         controller = gameObject.GetComponent<CharacterController>();
         playerBody = transform.GetChild(0);
         movementVector = Vector3.zero;
@@ -97,6 +107,14 @@ public class PlayerMovementController : MonoBehaviour
 
         //All the previous code only serves to calculate the movementVector, and we apply the movement to the controller at the very end of the Update
         controller.Move(movementVector * dt);
+        
+        
+        //Animation speed
+        float velocityZ = Vector3.Dot(movementVector.normalized, transform.forward);
+        float velocityX = Vector3.Dot(movementVector.normalized, transform.right);      
+        //Animation Move
+        _animatorPlayer.SetFloat("speed.z", velocityZ, 0.1f, Time.deltaTime); 
+        _animatorPlayer.SetFloat("speed.x", velocityX, 0.1f, Time.deltaTime);       
     }
 
     //@INPUT: Gather the stick coordinates
